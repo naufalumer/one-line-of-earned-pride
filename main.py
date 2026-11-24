@@ -27,6 +27,16 @@ def main() -> int:
     text = LINE + "\n"
     with open(path, "w", encoding="utf-8") as f:
         f.write(text)
+    # Round-trip verification: read the file back and confirm it holds
+    # exactly the intended line, so a truncated or altered write fails
+    # loudly instead of silently shipping a wrong entry.
+    with open(path, "r", encoding="utf-8") as f:
+        written = f.read()
+    if written != text:
+        raise SystemExit(
+            "entry.txt round-trip mismatch: expected "
+            f"{text!r}, got {written!r}"
+        )
     return 0
 
 
